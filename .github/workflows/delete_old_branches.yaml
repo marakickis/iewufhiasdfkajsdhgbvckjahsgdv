@@ -15,11 +15,12 @@ jobs:
       - name: Run Script
         run: |
           dtime=$(date -d '1 minute ago' +%s)
+          echo "$dtime"
           git for-each-ref --format="%(authordate:unix) %(refname:lstrip=3)" refs/remotes/origin | grep -v "master$" | grep -v "stage$" | grep -v HEAD |\
               awk '{ if ($1 < '$dtime') print $2 }' | cut -d/ -f2- | \
               while read line; 
               do  
-                echo $line
+                echo "$line"
                 git push origin :heads/$line; 
               done;
 
