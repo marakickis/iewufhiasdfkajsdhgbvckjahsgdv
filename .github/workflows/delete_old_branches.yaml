@@ -1,0 +1,20 @@
+name: delete_old_branches
+
+on: [push]
+
+jobs:
+  delete_branches:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Run Script
+        run: |
+          d1year=$(date -d '1 minute ago' +%s)
+          git for-each-ref --format="%(authordate:unix) %(refname:lstrip=3)" refs/remotes/origin | grep -v "master$" | grep -v "stage$" | grep -v HEAD |\
+              awk '{ if ($1 < '$d1year') print $2 }' | cut -d/ -f2- | while read line; do git push origin :heads/$line; done;
+
+
+
